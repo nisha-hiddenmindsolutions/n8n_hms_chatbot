@@ -24,7 +24,10 @@
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      // 1. Convert markdown formatted links [Label](url)
+      .replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      // 2. Autolink raw URLs (e.g. https://hiddenmindsolutions.in/#contact)
+      .replace(/(^|[^"'>])(https?:\/\/[^\s<]+[^\s<.,:;"')\]])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>')
       .replace(/^[\*\-]\s+(.*)$/gm, '<li>$1</li>');
 
     // Group li items cleanly into ul and remove extra internal line breaks
