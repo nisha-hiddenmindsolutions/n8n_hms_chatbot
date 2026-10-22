@@ -26,8 +26,16 @@
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/^[\*\-]\s+(.*)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>(\n|$)(\s*))+/g, '<ul>$&</ul>');
-    html = html.replace(/\n\n/g, '<br><br>').replace(/\n/g, "<br>");
+
+    // Group li items cleanly into ul and remove extra internal line breaks
+    html = html.replace(/((?:<li>.*?<\/li>\s*)+)/g, function(match) {
+      const cleanList = match.replace(/[\r\n]+/g, '').trim();
+      return '<ul>' + cleanList + '</ul>';
+    });
+
+    // Replace multiple empty line breaks with a compact 8px spacer
+    html = html.replace(/(\r?\n){2,}/g, '<div class="hms-spacer"></div>');
+    html = html.replace(/\r?\n/g, '<br>');
     return html;
   }
 
@@ -235,9 +243,18 @@
       border: 1px solid rgba(0, 0, 0, 0.06);
     }
 
+    .hms-spacer {
+      height: 8px;
+    }
     .hms-bubble-bot a { color: #0284c7; text-decoration: underline; font-weight: 600; }
-    .hms-bubble-bot ul { margin: 8px 0 8px 18px; }
-    .hms-bubble-bot li { margin-bottom: 4px; }
+    .hms-bubble-bot ul {
+      margin: 6px 0 6px 18px;
+      padding: 0;
+    }
+    .hms-bubble-bot li {
+      margin-bottom: 4px;
+      line-height: 1.45;
+    }
 
     .hms-typing {
       display: inline-flex;
